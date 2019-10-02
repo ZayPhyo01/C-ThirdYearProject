@@ -1,0 +1,54 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data.SqlClient;
+
+namespace WebApp.Pages.Account
+{
+    public partial class Login : System.Web.UI.Page
+    {
+        SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename=C:\Users\Administrator\Desktop\ASP.NetSecondTerm\GarageManagerDB.mdf;Integrated Security=True;Connect Timeout=30");
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            lblError.Visible = false;
+        }
+
+        protected void btnLogin_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string uname = txtLogin.Text;
+                string pass = txtPassword.Text;
+                con.Open();
+                string qry = "select * from users where name='" + uname + "' and Password='" + pass + "'";
+                SqlCommand cmd = new SqlCommand(qry, con);
+                SqlDataReader sdr = cmd.ExecuteReader();
+                if (sdr.Read())
+                {
+                    lblError.Text = "Login Sucess......!!";
+                    lblError.Visible = true;
+                    Session["UserId"] = sdr["Id"];
+                    Session["UserName"] = txtLogin.Text;
+                    Session["PW"] = txtPassword.Text;
+                    string a = sdr["user_type"].ToString();
+                    Session["User_Type"] = a.Trim();
+                    Response.Redirect("~/index.aspx");
+                }
+                else
+                {
+                    lblError.Text = "UserId & Password Is not correct Try again..!!";
+                    lblError.Visible = true;
+                    //Response.Redirect("RegPage.aspx");
+                }
+                con.Close();
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+            }  
+        }
+    }
+}

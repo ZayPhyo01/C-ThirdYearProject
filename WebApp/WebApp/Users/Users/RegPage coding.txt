@@ -1,0 +1,49 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data.SqlClient;
+
+namespace WebApp.Pages.Account
+{
+    public partial class RegPage : System.Web.UI.Page
+    {
+        SqlConnection con = new SqlConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename=C:\Users\Administrator\Desktop\ASP.NetSecondTerm\GarageManagerDB.mdf;Integrated Security=True;Connect Timeout=30");
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            
+
+        }
+
+        protected void btnReg_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                //string uname = txtLogin.Text;  
+                //string pass = txtPassword.Text;  
+                con.Open();
+                string qry = "Insert into users([name],password,email,user_type) values(@sname,@pw,@email,@utype)";
+                SqlCommand cmd = new SqlCommand();
+                cmd = new SqlCommand(qry, con);
+                cmd.Parameters.AddWithValue("@sname", txtName.Text);
+                cmd.Parameters.AddWithValue("@pw", txtPassword.Text);
+                cmd.Parameters.AddWithValue("@email", txtEmail.Text);
+                cmd.Parameters.AddWithValue("@utype", "user");
+
+
+                cmd.ExecuteNonQuery();
+                lblError.Text = "Register Success......!!";
+                lblError.Visible = true;
+                con.Close();
+            }
+            catch (Exception ex)
+            {
+                lblError.Text = "Register Fail......!!";
+                Response.Write(ex.Message);
+            }  
+
+        }
+    }
+}
